@@ -1,0 +1,94 @@
+This project is based on contiki-os 3
+
+Contiki Dependencies:
+srecord (http://srecord.sourceforge.net/)
+
+$ arm-none-eabi-gcc --version
+arm-none-eabi-gcc (GNU Tools for ARM Embedded Processors) 5.2.1 20151202 (release) [ARM/embedded-5-branch revision 231848]
+Copyright (C) 2015 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+[0] https://github.com/contiki-os/contiki/blob/master/platform/srf06-cc26xx/README.md
+
+
+
+Python Dependencies (for flashing):
+
+python-magic
+pyserial
+
+better use virtualenv:
+
+$ virtualenv2 venv
+$ source venv/bin/activate
+$ pip install -r requirements.txt
+
+
+UART Settings:
+
+see minicom-config (minirc.dfl : needs version 2.7)
+Baud 115200
+HW-flow off
+carriage-return on
+
+
+Building:
+make in the examples folder:
+examples/tr16-badge/$ make
+
+
+Flashing:
+Power off the device
+Plug it in again
+the badge should come up in bootloader-mode
+then run the following command (in your venv)
+
+$ flasher.py -p /dev/ttyUSB0 -e -w -v contiki/examples/tr16-badge/tr16-badge.bin
+
+
+
+Development:
+Startup.ccfg was altered
+the rest lies in
+examples/tr16-badge/tr16-badge.c
+and
+platform/tr16-badge/
+
+
+
+Sending with the YardStick One and rfcat:
+rfcat can be found here: hg clone https://bitbucket.org/atlas0fd00m/rfcat
+the rf-troopers16 python-script provides everything you need to send messages to the badge with the YS1
+
+tl;dr:
+Syncword: 0xaabbaabb
+Freq: 868 Mhz
+Deviation: 25khz
+Rate: 50k
+Pktlen: 30
+Modulation: GFSK
+EnableCRC
+
+if the first Byte is 0xFF you can send 28 Bytes of text to the Badge which will be show on the display
+
+
+
+What the badge does:
+
+Basically there are three Radio-Modes:
+receive (default)
+transmit (activated via the uart-button)
+and specan (activated via uart)
+
+In receive every second it is tried to receive a packet with the Settings from the section above.
+If a Message is received, text will be displayed and the badge won't accept a message for half a minute.
+
+Transmit can be activated by a Button-press on UART (next to reset)
+per default this will send an empty buffer initialised with zeros.
+to change this you can fill the buffer via UART by pressing 't' (for tx) and your payload (ASCII)
+if you hit enter (\n) the buffer is set and will be sent once if you press the button.
+then your in receive again.
+
+specan is a PoC of visualizing the spectrum.
+It is activated via UART by pressing 's' (specan), runs once and switches over to receive.
+
