@@ -14,7 +14,7 @@ endif
 
 ifdef FNAME
 	CFLAGS+="-DFNAME=\"${FNAME}\""
-endif FNAME
+endif
 
 ifdef TOKEN
 	CFLAGS+="-DTOKEN=\"${TOKEN}\""
