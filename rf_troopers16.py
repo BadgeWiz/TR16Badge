@@ -128,13 +128,13 @@ def parse_args():
     a = parser.parse_args()
     msg = None
     if a.send_msg:
-        if len(a.msg[0]) < 0 or len(a.msg[0]) > 29:
+        if len(a.send_msg[0]) < 0 or len(a.send_msg[0]) > 29:
             print("ERROR: either no message given or text too long (29 chars allowed).")
             exit(1)
-        msg = chr(0xff) + a.msg[0]
+        msg = chr(0xff) + a.send_msg[0]
         # Null bytes are appended at the badge in any way. But sometimes garbage
         # appended during sending. So if message is too small, append 0xff.
-        if len(a.msg[0]) < 29:
+        if len(a.send_msg[0]) < 29:
             msg += chr(0x00)
     if a.rec_msg:
         msg = - 0x01
